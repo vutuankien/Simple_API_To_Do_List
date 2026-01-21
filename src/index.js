@@ -3,12 +3,40 @@ const app = express();
 const port = 3000
 const supabase = require('./config');
 const morgan = require('morgan');
+const cors = require('cors');
 
-// Middleware
+/** Middleware để log các request */
 app.use(morgan('dev'));
 
+/** Middleware để parse JSON body */
 app.use(express.json());
+
+/** Middleware để parse URL-encoded body */
 app.use(express.urlencoded({ extended: true }));
+
+/** Cấu hình CORS với các tùy chọn bảo mật */
+const CORS_OPTIONS = {
+    /** Danh sách các origin được phép truy cập API */
+    origin: [
+        'http://localhost:3000',
+        'http://localhost:3001', 
+        'http://localhost:5173',
+        'http://localhost:5174',
+        'http://localhost:8080'
+    ],
+    /** Các HTTP methods được phép */
+    methods: ['GET', 'POST', 'PATCH', 'DELETE', 'PUT', 'OPTIONS'],
+    /** Các headers được phép trong request */
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+    /** Cho phép gửi credentials (cookies, authorization headers) */
+    credentials: true,
+    /** Thời gian cache preflight request (24 giờ) */
+    maxAge: 86400
+};
+
+/** Áp dụng CORS middleware */
+app.use(cors(CORS_OPTIONS));
+
 
 // Log tất cả các route khi server khởi động
 
